@@ -1,1 +1,0 @@
-C:\Users\fried\Programming\Programs\To_Do_List_V2\backend\target\debug\src.exe: C:\Users\fried\Programming\Programs\To_Do_List_V2\backend\src\db_interact.rs C:\Users\fried\Programming\Programs\To_Do_List_V2\backend\src\main.rs
