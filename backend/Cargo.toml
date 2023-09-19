@@ -1,0 +1,18 @@
+[package]
+name = "src"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = {version="0.6.20", features=["macros"]}
+sqlx = {version="0.7.1", features=["postgres", "runtime-tokio"]}
+tokio = {version="1.32.0", features=["full"]}
+serde = {version="1.0", features=["derive"]}
+tower-http = {version="0.4.4", features=["cors"]}
+
+
+[[bin]]
+name = "src"
+path = "src/main.rs"

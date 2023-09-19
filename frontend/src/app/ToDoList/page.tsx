@@ -16,8 +16,6 @@ export default function ToDoList() {
         'Content-Type': 'application/json'
       }
     });
-    const result = await response.json();
-    console.log(result);
   }
   return (
     <main className="background">

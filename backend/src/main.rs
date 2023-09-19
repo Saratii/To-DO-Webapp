@@ -1,43 +1,50 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{sync::Arc, net::SocketAddr};
+use tower_http::cors::{Any, CorsLayer};
 
 use axum::{
-    extract::{Query, State},
-    http::StatusCode,
-    response::IntoResponse,
+    extract::{State, Json},
     routing::{get, post},
-    Json, Router,
+    Router, http::{Method, HeaderName}
 };
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::PgPoolOptions;
+use sqlx::{postgres::PgPoolOptions, Postgres, Pool};
 use tokio::sync::Mutex;
 
-#[derive(Serialize, Deserialize, Clone)]
+mod db_interact;
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Task {
-    pub serial: String,
+//     pub serial: String,
     pub title: String,
     pub description: Option<String>,
-    pub creation_date: String,
-    pub due_date: Option<String>,
+    // pub creation_date: String,
+    // pub due_date: Option<String>,
+}
+
+#[derive(Clone, Debug)]
+pub struct AppState{
+    pub database_connection: Pool<Postgres>
 }
 
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST])
+        .allow_origin(Any)
+        .allow_headers(vec![HeaderName::from_static("content-type")]);
     let pool = PgPoolOptions::new()
         .max_connections(1)
         .connect("postgres://postgres:mommy@localhost:5433/To_Do_Database")
         .await?;
-    let row: (i32,) = sqlx::query_as("SELECT 150")
-        .bind(150_i64)
-        .fetch_one(&pool)
-        .await?;
-    assert_eq!(row.0, 150);
-
-    let shared_state: Arc<Mutex<Vec<Task>>> = Arc::new(Mutex::new(Vec::new()));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    println!("Server listening on {}", addr);
+    let shared_state = Arc::new(Mutex::new(AppState{database_connection: pool}));
     let app = Router::new()
         .route("/", get(root))
         .route("/tasks", post(create_task).get(read_tasks))
+        .layer(cors)
         .with_state(shared_state);
-    axum::Server::bind(&"127.0.0.1:3000".parse().unwrap())
+    axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
@@ -48,36 +55,18 @@ async fn main() -> Result<(), sqlx::Error> {
 async fn root() -> &'static str {
     "Hello, World!, this is the root"
 }
+
+#[axum::debug_handler]
 async fn create_task(
-    // Query(params): Query<HashMap<String, String>>,
-    State(state): State<Arc<Mutex<Vec<Task>>>>,
-) -> Json<Vec<Task>> {
-    let task = Task {
-        // serial: params.get("title").unwrap().to_string(),
-        // title: params.get("title").unwrap().to_string(),
-        // description: params.get("title").map(|d| d.to_string()),
-        // creation_date: params.get("title").unwrap().to_string(),
-        // due_date: params.get("title").map(|d| d.to_string()),
-        serial: "hello world".to_owned(),
-        title: "hello world".to_owned(),
-        description: Some("hello world".to_owned()),
-        creation_date: "hello world".to_owned(),
-        due_date: Some("hello world".to_owned()),
-    };
-    let mut state = state.lock().await;
-    state.push(task);
-    let mut tasks: Vec<Task> = Vec::new();
-    for task in state.iter() {
-        tasks.push(task.clone());
-    }
-    return Json(tasks);
+    State(state): State<Arc<Mutex<AppState>>>,
+    Json(task): Json<Task>,
+) {
+    let state = state.lock().await;
+    db_interact::insert_task(task, &state.database_connection).await;
 }
 
-async fn read_tasks(State(state): State<Arc<Mutex<Vec<Task>>>>) -> Json<Vec<Task>> {
+async fn read_tasks(State(state): State<Arc<Mutex<AppState>>>) -> Json<Vec<Task>> {
     let state = state.lock().await;
-    let mut tasks: Vec<Task> = Vec::new();
-    for task in state.iter() {
-        tasks.push(task.clone());
-    }
-    return Json(tasks);
+    let tasks = db_interact::read_tasks(&state.database_connection);
+    return Json(tasks.await);
 }

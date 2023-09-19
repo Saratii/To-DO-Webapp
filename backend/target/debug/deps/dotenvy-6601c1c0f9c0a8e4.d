@@ -1,0 +1,9 @@
+C:\Users\fried\Programming\Programs\To_Do_List_V2\backend\src\target\debug\deps\dotenvy-6601c1c0f9c0a8e4.rmeta: C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\lib.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\errors.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\find.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\iter.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\parse.rs
+
+C:\Users\fried\Programming\Programs\To_Do_List_V2\backend\src\target\debug\deps\dotenvy-6601c1c0f9c0a8e4.d: C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\lib.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\errors.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\find.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\iter.rs C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\parse.rs
+
+C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\lib.rs:
+C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\errors.rs:
+C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\find.rs:
+C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\iter.rs:
+C:\Users\fried\.cargo\registry\src\index.crates.io-6f17d22bba15001f\dotenvy-0.15.7\src\parse.rs:
