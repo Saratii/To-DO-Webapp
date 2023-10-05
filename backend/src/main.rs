@@ -3,7 +3,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 use axum::{
     extract::{State, Json},
-    routing::{get, post},
+    routing::{get, post, delete},
     Router, http::{Method, HeaderName}
 };
 use serde::{Deserialize, Serialize};
@@ -14,7 +14,7 @@ mod db_interact;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Task {
-//     pub serial: String,
+    pub id: i32,
     pub title: String,
     pub description: Option<String>,
     // pub creation_date: String,
@@ -29,7 +29,7 @@ pub struct AppState{
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
     let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST])
+        .allow_methods([Method::GET, Method::POST, Method::DELETE])
         .allow_origin(Any)
         .allow_headers(vec![HeaderName::from_static("content-type")]);
     let pool = PgPoolOptions::new()
@@ -41,6 +41,7 @@ async fn main() -> Result<(), sqlx::Error> {
     let shared_state = Arc::new(Mutex::new(AppState{database_connection: pool}));
     let app = Router::new()
         .route("/", get(root))
+        .route("/tasks/:id", delete(delete_task))
         .route("/tasks", post(create_task).get(read_tasks))
         .layer(cors)
         .with_state(shared_state);
@@ -60,13 +61,23 @@ async fn root() -> &'static str {
 async fn create_task(
     State(state): State<Arc<Mutex<AppState>>>,
     Json(task): Json<Task>,
-) {
+) -> Json<Vec<Task>> {
     let state = state.lock().await;
     db_interact::insert_task(task, &state.database_connection).await;
+    return Json(db_interact::read_tasks(&state.database_connection).await)
 }
 
 async fn read_tasks(State(state): State<Arc<Mutex<AppState>>>) -> Json<Vec<Task>> {
     let state = state.lock().await;
     let tasks = db_interact::read_tasks(&state.database_connection);
     return Json(tasks.await);
+}
+
+async fn delete_task(
+    State(state): State<Arc<Mutex<AppState>>>,
+    axum::extract::Path(id): axum::extract::Path<u32>
+) -> Json<Vec<Task>> {
+    let state = state.lock().await;
+    db_interact::delete_task(id, &state.database_connection).await;
+    return Json(db_interact::read_tasks(&state.database_connection).await)
 }

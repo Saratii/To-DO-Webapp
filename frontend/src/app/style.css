@@ -5,6 +5,9 @@
 .light_text {
     font-size: 6vh;
 }
+.dark_text{
+    color: #5b035b;
+}
 
 .navigation_bar {
     position: fixed;
@@ -58,4 +61,41 @@ html {
     background: linear-gradient(-45deg, #4a0579, #f307ac);
     text-align: center;
     background-repeat: no-repeat;
+}
+.dropdown-container {
+    max-height: 300px; /* Set the maximum height to make it scrollable */
+    overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.dropdown-list {
+    list-style: none;
+    padding: 0;
+}
+
+.dropdown-item {
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    padding: 10px;
+}
+
+/* Style the dropdown titles */
+.dropdown-item h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Style the dropdown select elements */
+.dropdown-item select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+.description {
+    display: none;
+    margin-top: 10px;
+}
+.notebook_background{
+    background-color: #eee;
 }
